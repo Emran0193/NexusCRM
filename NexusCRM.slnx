@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NexusCRM.Api/NexusCRM.Api.csproj" />
+    <Project Path="src/NexusCRM.AppHost/NexusCRM.AppHost.csproj" />
+    <Project Path="src/NexusCRM.Application/NexusCRM.Application.csproj" />
+    <Project Path="src/NexusCRM.Contracts/NexusCRM.Contracts.csproj" />
+    <Project Path="src/NexusCRM.Domain/NexusCRM.Domain.csproj" />
+    <Project Path="src/NexusCRM.Infrastructure/NexusCRM.Infrastructure.csproj" />
+    <Project Path="src/NexusCRM.Plugins.Abstractions/NexusCRM.Plugins.Abstractions.csproj" />
+    <Project Path="src/NexusCRM.Plugins.Samples/NexusCRM.Plugins.Samples.csproj" />
+    <Project Path="src/NexusCRM.ServiceDefaults/NexusCRM.ServiceDefaults.csproj" />
+    <Project Path="src/NexusCRM.Shared/NexusCRM.Shared.csproj" />
+    <Project Path="src/NexusCRM.Worker/NexusCRM.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NexusCRM.Api.Tests/NexusCRM.Api.Tests.csproj" />
+    <Project Path="tests/NexusCRM.Application.Tests/NexusCRM.Application.Tests.csproj" />
+    <Project Path="tests/NexusCRM.Architecture.Tests/NexusCRM.Architecture.Tests.csproj" />
+    <Project Path="tests/NexusCRM.Domain.Tests/NexusCRM.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,48 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.ncrunch*
+_ReSharper*/
+*.DotSettings.user
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+project.lock.json
+artifacts/
+
+## Node / Angular
+node_modules/
+dist/
+.angular/
+*.log
+npm-debug.log*
+.pnpm-store/
+
+## IDE
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+## Env / secrets
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+secrets.json
+
+## Docker
+*.override.yml.local
+
+## Misc
+*.tmp
+*.bak
+.cache/
+.run/

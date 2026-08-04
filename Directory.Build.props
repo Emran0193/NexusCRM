@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Company>NexusCRM</Company>
+    <Authors>NexusCRM</Authors>
+    <Product>NexusCRM</Product>
+    <Copyright>Copyright © NexusCRM</Copyright>
+  </PropertyGroup>
+</Project>
