@@ -1,0 +1,27 @@
+# syntax=docker/dockerfile:1
+
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+COPY NexusCRM.slnx ./
+COPY src/NexusCRM.Api/NexusCRM.Api.csproj src/NexusCRM.Api/
+COPY src/NexusCRM.Application/NexusCRM.Application.csproj src/NexusCRM.Application/
+COPY src/NexusCRM.Contracts/NexusCRM.Contracts.csproj src/NexusCRM.Contracts/
+COPY src/NexusCRM.Domain/NexusCRM.Domain.csproj src/NexusCRM.Domain/
+COPY src/NexusCRM.Infrastructure/NexusCRM.Infrastructure.csproj src/NexusCRM.Infrastructure/
+COPY src/NexusCRM.Plugins.Abstractions/NexusCRM.Plugins.Abstractions.csproj src/NexusCRM.Plugins.Abstractions/
+COPY src/NexusCRM.Plugins.Samples/NexusCRM.Plugins.Samples.csproj src/NexusCRM.Plugins.Samples/
+COPY src/NexusCRM.Shared/NexusCRM.Shared.csproj src/NexusCRM.Shared/
+COPY src/NexusCRM.ServiceDefaults/NexusCRM.ServiceDefaults.csproj src/NexusCRM.ServiceDefaults/
+
+RUN dotnet restore src/NexusCRM.Api/NexusCRM.Api.csproj
+
+COPY src/ src/
+RUN dotnet publish src/NexusCRM.Api/NexusCRM.Api.csproj -c Release -o /app/publish --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+WORKDIR /app
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "NexusCRM.Api.dll"]

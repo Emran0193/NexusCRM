@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: nexuscrm-postgres
+    profiles: ["docker-db"]
+    environment:
+      POSTGRES_DB: nexuscrm
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      # Opt-in via: docker compose --profile docker-db up -d
+      # Uses 5433 so it does not clash with a local Windows PostgreSQL on 5432
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nexuscrm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: nexuscrm-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: nexuscrm-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: nexus
+      RABBITMQ_DEFAULT_PASS: nexus
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.114.0
+    container_name: nexuscrm-otel
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+
+volumes:
+  postgres_data:

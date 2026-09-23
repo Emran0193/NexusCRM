@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Restore
+        run: dotnet restore NexusCRM.slnx
+      - name: Build
+        run: dotnet build NexusCRM.slnx --no-restore -c Release
+      - name: Test
+        run: dotnet test NexusCRM.slnx --no-build -c Release --verbosity normal
+        env:
+          # Prefer Testcontainers on CI (Docker available on ubuntu-latest).
+          NEXUSCRM_USE_TESTCONTAINERS: "1"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/NexusCRM.Web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/NexusCRM.Web/package-lock.json
+      - run: npm ci
+      - run: npm run build
