@@ -1,8 +1,8 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NexusCRM.Application.Abstractions.Identity;
 using NexusCRM.Infrastructure.Authorization;
@@ -24,7 +24,6 @@ public static class IdentityDependencyInjection
             }
         });
 
-        var jwt = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
         var isDevelopment = string.Equals(
             configuration["ASPNETCORE_ENVIRONMENT"]
             ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
@@ -42,8 +41,14 @@ public static class IdentityDependencyInjection
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            .AddJwtBearer();
+
+        // Bind validation from IOptions so WebApplicationFactory config overrides apply,
+        // and use a KeyId-aware symmetric key (avoids IDX10517 with JsonWebTokenHandler).
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<IOptions<JwtOptions>>((options, jwtOptions) =>
             {
+                var jwt = jwtOptions.Value;
                 options.RequireHttpsMetadata = !isDevelopment;
                 options.MapInboundClaims = false;
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -56,7 +61,7 @@ public static class IdentityDependencyInjection
                     RequireSignedTokens = true,
                     ValidIssuer = jwt.Issuer,
                     ValidAudience = jwt.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey)),
+                    IssuerSigningKey = JwtSigning.CreateSecurityKey(jwt.SigningKey),
                     ClockSkew = TimeSpan.FromMinutes(1),
                     RoleClaimType = System.Security.Claims.ClaimTypes.Role,
                     NameClaimType = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Email

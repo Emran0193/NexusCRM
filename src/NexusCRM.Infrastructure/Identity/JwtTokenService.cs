@@ -37,7 +37,7 @@ internal sealed class JwtTokenService : ITokenService
 
         claims.AddRange(permissions.Select(p => new Claim(NexusClaimTypes.Permission, p)));
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey));
+        var key = JwtSigning.CreateSecurityKey(_options.SigningKey);
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
